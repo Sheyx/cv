@@ -11,17 +11,26 @@ This is script for tracking ball
 
 import cv2
 import numpy as np
+import time
 
 
 cap = cv2.VideoCapture(0)
-cap.set(3,600) # set Width
-cap.set(4,600) # set Height
+#cap.set(3,600) # set Width
+#cap.set(4,600) # set Height
 
+#
 hsv_min = np.array((29, 54, 148), np.uint8)
 hsv_max = np.array((44, 216, 255), np.uint8)
+t = 0
+
+#Начальные координаты трекинга
+lastx = 0
+lasty = 0
+path_color = (0,0,255)
 
 
 while True:
+    #Инициализация изображения
     ret, img = cap.read()
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     #Фильтрация по диапазону цветов
@@ -38,8 +47,14 @@ while True:
     #Определение минимального размера объекта
     if w > 10 and h > 10:
         cv2.rectangle(img,(x, y),(x+w, y+h),(0,0,255),3) 
+        
+    #FPS
+    dt = time.clock() - t
+    t = time.clock()    
+    text = '%0.1f' % (1./dt)
+    cv2.putText( img, text, (20, 20), cv2.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), thickness = 2)
 
-
+    #Вывод изображения 
     cv2.imshow('result', img) 
     
     
