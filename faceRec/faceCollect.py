@@ -8,16 +8,16 @@ Created on Wed May 24 17:30:20 2020
 import cv2
 import time
 
-faceCascade = cv2.CascadeClassifier('cascade/haarcascade_frontalface_default.xml')
+faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 #Подцепляем камеру
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 #cap.set(3, 640)  # set Width
 #cap.set(4, 480)  # set Height
 ret, img = cap.read()
 time.sleep(1)
 
-faceID = int(input('Enter ID'))
+faceID = int(input('Enter ID = '))
 count = 0
 
 while True:
@@ -32,7 +32,7 @@ while True:
         count += 1
 
     #SaveFace
-    cv2.imwrite('facesLib/' + str(faceID) + '-img-' + str(count) + '.jpg', roi_gray)
+        cv2.imwrite('facesLib/' + str(faceID) + '-img-' + str(count) + '.jpg', roi_gray)
     #Show window
     cv2.imshow('video', img)
 
