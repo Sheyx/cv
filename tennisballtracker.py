@@ -8,23 +8,22 @@ Created on Thu May 21 22:57:50 2020
 This is script for tracking ball
 """
 
+import math
+import time
+
 import cv2
 import numpy as np
-import time
-import math
-
-
-
-
 
 cap = cv2.VideoCapture(0)
-cap.set(3,600) # set Width
-cap.set(4,600) # set Height
+cap.set(3, 600)  # set Width
+cap.set(4, 600)  # set Height
 time.sleep(0.1)
+
 
 def createPath(img):
     h, w = img.shape[:2]
     return np.zeros((h, w, 3), np.uint8)
+
 
 hsv_min = np.array((29, 54, 148), np.uint8)
 hsv_max = np.array((44, 216, 255), np.uint8)
@@ -81,9 +80,6 @@ while True:
     k = cv2.waitKey(30) & 0xff
     if k == 27:  # press 'ESC' to quit
         break
-
-
-
 
 cap.release()
 cv2.destroyAllWindows()
