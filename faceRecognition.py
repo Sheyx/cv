@@ -12,7 +12,7 @@ import numpy as np
 faceCascade = cv2.CascadeClassifier('cascade/haarcascade_frontalface_default.xml')
 
 #Подцепляем камеру
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 #cap.set(3, 640)  # set Width
 #cap.set(4, 480)  # set Height
 ret, img = cap.read()
