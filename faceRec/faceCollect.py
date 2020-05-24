@@ -7,7 +7,6 @@ Created on Wed May 24 17:30:20 2020
 """
 import cv2
 import time
-import numpy as np
 
 faceCascade = cv2.CascadeClassifier('cascade/haarcascade_frontalface_default.xml')
 
@@ -17,12 +16,9 @@ cap = cv2.VideoCapture(0)
 #cap.set(4, 480)  # set Height
 ret, img = cap.read()
 time.sleep(1)
-h, w = img.shape[:2]
-roi_color = np.zeros((h, w, 3), np.uint8)
 
-#FPS timer
-t = 0
-
+faceID = int(input('Enter ID'))
+count = 0
 
 while True:
     ret, img = cap.read()
@@ -33,13 +29,10 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
         roi_gray = gray[y:y + h, x:x + w]
+        count += 1
 
-    #FPS
-    dt = time.time() - t
-    t = time.time()
-    text = '%0.1f' % (1. / dt)
-    cv2.putText(img, text, (20, 20), cv2.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), 2)
-
+    #SaveFace
+    cv2.imwrite('facesLib/' + str(faceID) + '-img-' + str(count) + '.jpg', roi_gray)
     #Show window
     cv2.imshow('video', img)
 
