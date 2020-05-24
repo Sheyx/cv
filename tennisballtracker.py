@@ -11,21 +11,24 @@ This is script for tracking ball
 import cv2
 import numpy as np
 import time
+import math
 
+
+
+
+
+cap = cv2.VideoCapture(0)
+cap.set(3,600) # set Width
+cap.set(4,600) # set Height
+time.sleep(0.1)
 
 def createPath(img):
     h, w = img.shape[:2]
     return np.zeros((h, w, 3), np.uint8)
 
-
-cap = cv2.VideoCapture(0)
-# cap.set(3,600) # set Width
-# cap.set(4,600) # set Height
-
-
 hsv_min = np.array((29, 54, 148), np.uint8)
 hsv_max = np.array((44, 216, 255), np.uint8)
-# t = 0
+t = 0
 
 # Начальные координаты трекинга
 lastx = 0
@@ -51,19 +54,25 @@ while True:
     x, y, w, h = cv2.boundingRect(thresh)
     # Определение минимального размера объекта
     if w > 10 and h > 10:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        nx = int(x + w / 2)
+        ny = int(y + h / 2)
         if lastx > 0 and lasty > 0:
-            cv2.line(path, (lastx, lasty), (int(x + w / 2), int(y + h / 2)), (0, 0, 255), 5)
-        lastx = int(x + w / 2)
-        lasty = int(y + h / 2)
-
+            ln = math.sqrt(math.pow(nx - lastx, 2) + math.pow(ny - lasty, 2))
+            if ln > 50:
+                cv2.line(path, (lastx, lasty), (nx, ny), (40, 115, 10), 2)
+                lastx = nx
+                lasty = ny
+        else:
+            lastx = nx
+            lasty = ny
     # FPS
-    # dt = time.clock() - t
-    # t = time.clock()
-    # text = '%0.1f' % (1./dt)
-    # cv2.putText( img, text, (20, 20), cv2.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), thickness = 2)
+    dt = time.time() - t
+    t = time.time()
+    text = '%0.1f' % (1. / dt)
+    cv2.putText(img, text, (20, 20), cv2.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), 2)
 
-    # Накладываем 
+    # Накладываем
     img = cv2.add(img, path)
 
     # Вывод изображения
@@ -72,6 +81,9 @@ while True:
     k = cv2.waitKey(30) & 0xff
     if k == 27:  # press 'ESC' to quit
         break
+
+
+
 
 cap.release()
 cv2.destroyAllWindows()
