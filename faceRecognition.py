@@ -12,18 +12,22 @@ import numpy as np
 faceCascade = cv2.CascadeClassifier('cascade/haarcascade_frontalface_default.xml')
 
 #Подцепляем камеру
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 #cap.set(3, 640)  # set Width
 #cap.set(4, 480)  # set Height
-ret, img = cap.read()
-time.sleep(1)
-h, w = img.shape[:2]
-roi_color = np.zeros((h, w, 3), np.uint8)
+
 
 #FPS timer
 t = 0
 
+names = ['None', 'Dmitry', 'Stefa']
+recognizer = cv2.face.LBPHFaceRecognizer_create()
+recognizer.read('faceRec/training/trainer.yml')
+cascadePath = "faceRec/haarcascade_frontalface_default.xml"
+faceCascade = cv2.CascadeClassifier(cascadePath)
 
+
+id = 0
 while True:
     ret, img = cap.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -32,9 +36,21 @@ while True:
 
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        roi_gray = gray[y:y + h, x:x + w]
+        id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
 
-    #FPS
+        if (confidence < 50):
+            id = names[id]
+            confidence = "  {0}%".format(round(100 - confidence))
+        else:
+            id = "unknown"
+            confidence = "  {0}%".format(round(100 - confidence))
+
+        cv2.putText(img, str(id), (x + 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        cv2.putText(img, str(confidence), (x + 5, y + h - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 1)
+
+
+
+        #FPS
     dt = time.time() - t
     t = time.time()
     text = '%0.1f' % (1. / dt)
